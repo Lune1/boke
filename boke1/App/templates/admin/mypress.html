@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h3>评论</h3>
+    <hr>
+   {% for press in mypress %}
+         <p>
+            评论内容：{{ press.content }}
+        </p>
+        <p>
+            评论时间：{{ press.date }}
+        </p>
+        <p>
+            评论文章：{{ press.my_article.title }}
+        </p>
+   {% endfor %}
+
+</body>
+</html>

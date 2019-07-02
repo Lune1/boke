@@ -1,0 +1,12 @@
+<form action="{{ url_for('blue.admin_add_article') }}" method="post">
+    题目：<input style="width: 300px;height: 50px" type="text" name="title"><br><br>
+    内容：<input style="width: 300px;height: 100px" type="text" name="context"><br><br>
+    标签：<input style="width: 300px;height: 50px" type="text" name="tag"><br><br>
+    栏目：<select style="padding: 15px;width: 300px;height: 50px" id="" name="classify"> <br>     <br>
+        {% for classify in classifies %}
+            <option value="{{ classify.name }}">{{ classify.name }}</option>
+        {% endfor %}
+
+    </select><br>   <br>
+    <input type="submit" value="提交">
+</form>
