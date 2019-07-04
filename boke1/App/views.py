@@ -165,29 +165,25 @@ def admin_update_article(id):
         article.date = date
         print(classify)
         classify = Classify.query.filter_by(name=classify).first()
-        if article.myclassify:
-            if article.myclassify != classify.id:
-                print(article.myclassify, classify.id)
-                article.myclassify = classify.id
+        if article.myclassify != classify.id:
+            article.myclassify = classify.id
             # print(classify.mycount)
-                classify.mycount += int(1)
+            classify.mycount += int(1)
                 # print(classify.mycount)
                 # print(Classify.query.get(article.myclassify).mycount)
-                Classify.query.get(article.myclassify).mycount -= int(1)
+            Classify.query.get(article.myclassify).mycount -= int(1)
                 # print(Classify.query.get(article.myclassify).mycount)
-                # print(classify,article.myclassify,classify.count,Classify.query.filter_by(id=article.myclassify).first().count)
-                my_update()
-                return redirect(url_for('blue.admin_article', values='修改成功'))
-            else:
-                my_update()
-                return redirect(url_for('blue.admin_article', values='修改成功'))
+            my_update()
+            return redirect(url_for('blue.admin_article', values='修改成功'))
         else:
             my_update()
             return redirect(url_for('blue.admin_article', values='修改成功'))
     article = Article.query.get(id)
     classifies = Classify.query.all()
-    return render_template('admin/modify_article.html', article=article, classifies=classifies, username=username)
-
+    if classifies:
+    	return render_template('admin/modify_article.html', article=article, classifies=classifies, username=username)
+    else:
+    	return redirect(url_for('blue.admin_category'))
 @blue.route('/admin/update-category/<id>/',methods=['POST',"GET"])
 def admin_update_category(id):
     username = session.get('username','')
