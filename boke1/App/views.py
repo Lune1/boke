@@ -46,10 +46,11 @@ def infopic(id):
         article.press += 1
         my_add(press)
         article = Article.query.get(id)
-        mypress = Mypress.query.all()
+        mypress = Mypress.query.filter_by(id=id)
         return render_template('home/infopic.html', article=article,mypress=mypress)
     article = Article.query.get(id)
-    mypress = Mypress.query.all()
+    mypress = Mypress.query.filter_by(articles=id)
+
     if article:
         return render_template('home/infopic.html',article=article,mypress=mypress)
     else:
