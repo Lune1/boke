@@ -33,10 +33,27 @@ def gbook():
 def info():
     return render_template('home/info.html')
 
-@blue.route('/infopic/')
-def infopic():
-    return render_template('home/infopic.html')
-
+@blue.route('/infopic/<id>/',methods=['POST','GET'])
+def infopic(id):
+    if request.method == 'POST':
+        content = request.form.get('content')
+        date = datetime.now().strftime('%Y-%m-%d %X')
+        press = Mypress()
+        press.content = content
+        press.date = date
+        press.articles = id
+        article = Article.query.get(id)
+        article.press += 1
+        my_add(press)
+        article = Article.query.get(id)
+        mypress = Mypress.query.all()
+        return render_template('home/infopic.html', article=article,mypress=mypress)
+    article = Article.query.get(id)
+    mypress = Mypress.query.all()
+    if article:
+        return render_template('home/infopic.html',article=article,mypress=mypress)
+    else:
+        return redirect(url_for('blue.index'))
 
 @blue.route('/classify/<id>/')
 def classify(id):
@@ -44,27 +61,6 @@ def classify(id):
     articles = classify.articles
     classifies = Classify.query.all()
     return render_template('home/index.html',articles=articles,classifies=classifies)
-
-@blue.route('/check_article/<id>/')
-def check_article(id):
-    article = Article.query.get(id)
-    return render_template('home/check_article.html',article=article)
-
-@blue.route('/add_press/<id>/',methods=['POST','GET'])
-def add_press(id):
-    if request.method == 'POST':
-        content = request.form.get('content')
-        date = datetime.now().strftime('%Y-%m-%d %X')
-        press = Mypress()
-        press.content=content
-        press.date=date
-        press.articles=id
-        article = Article.query.get(id)
-        article.press +=1
-        my_add(press)
-        article = Article.query.get(id)
-        return render_template('home/check_article.html',article=article)
-    return render_template('home/check_article.html')
 
 
 #后台
@@ -109,8 +105,6 @@ def admin_notice():
 def admin_comment():
     username = session.get('username','')
     mypress = Mypress.query.all()
-    # for i in mypress:
-    #     print(i.my_article.id)
     return render_template('admin/comment.html',username=username,mypress=mypress)
 
 @blue.route('/admin/category/')
@@ -166,13 +160,14 @@ def admin_update_article(id):
         print(classify)
         classify = Classify.query.filter_by(name=classify).first()
         if article.myclassify != classify.id:
+            print(article.myclassify, classify.id)
             article.myclassify = classify.id
             # print(classify.mycount)
             classify.mycount += int(1)
-                # print(classify.mycount)
-                # print(Classify.query.get(article.myclassify).mycount)
+            # print(classify.mycount)
+            # print(Classify.query.get(article.myclassify).mycount)
             Classify.query.get(article.myclassify).mycount -= int(1)
-                # print(Classify.query.get(article.myclassify).mycount)
+            # print(Classify.query.get(article.myclassify).mycount)
             my_update()
             return redirect(url_for('blue.admin_article', values='修改成功'))
         else:
@@ -180,10 +175,8 @@ def admin_update_article(id):
             return redirect(url_for('blue.admin_article', values='修改成功'))
     article = Article.query.get(id)
     classifies = Classify.query.all()
-    if classifies:
-    	return render_template('admin/modify_article.html', article=article, classifies=classifies, username=username)
-    else:
-    	return redirect(url_for('blue.admin_category'))
+    return render_template('admin/modify_article.html', article=article, classifies=classifies, username=username)
+
 @blue.route('/admin/update-category/<id>/',methods=['POST',"GET"])
 def admin_update_category(id):
     username = session.get('username','')
@@ -219,7 +212,7 @@ def delete_classify(id):
 @blue.route('/delete_article/<id>/')
 def delete_article(id):
     article=Article.query.filter_by(id=id).first()
-    if article.myclassify:
+    if article.myclassify :
         classify = Classify.query.get(article.myclassify)
         classify.mycount -= int(1)
     my_delete(article)
@@ -257,18 +250,25 @@ def admin_add_article():
         title = request.form.get('title')
         tag = request.form.get('tag')
         classify = request.form.get('classify')
-        if classify:
+        date = datetime.now().strftime('%Y-%m-%d %X')
+        if classify != None :
             classify = Classify.query.filter_by(name=classify).first()
             # print(context,tag,title,category)
             # classify = Classify.query.filter_by(id=category).first()
             classify.mycount += int(1)
-        date = datetime.now().strftime('%Y-%m-%d %X')
-        article = Article(title=title,context=context,date=date,myclassify=classify.id,tag=tag)
+            article = Article(title=title, context=context, date=date, myclassify=classify.id, tag=tag)
+            my_add(article)
+            return redirect(url_for('blue.admin_article'))
+        article = Article(title=title,context=context,date=date,tag=tag)
         my_add(article)
         return redirect(url_for('blue.admin_article'))
     else:
         classifies = Classify.query.all()
-        return render_template('admin/add-article.html',username=username,classifies=classifies)
+        if classifies:
+            return render_template('admin/add-article.html',username=username,classifies=classifies)
+        else:
+            return redirect(url_for('blue.admin_category'))
+
 @blue.route('/check_press/<id>/',methods=['POST','GET'])
 def admin_check_press(id):
     username = session.get('username', '')

@@ -29,7 +29,7 @@
       <li><a href="{{ url_for('blue.about') }}">关于我</a></li>
       <li><a href="{{ url_for('blue.gbook') }}">留言</a></li>
       <li><a href="{{ url_for('blue.info') }}">内容页</a></li>
-      <li><a href="{{ url_for('blue.infopic') }}">内容页</a></li>
+      <li><a href="#">内容页</a></li>
     </ul>
 </nav>
 </header>
@@ -107,9 +107,9 @@
     <!--弹出层结束-->
     <!--图片特效内容开始-->
     <div class="piccontext">
-      <h2> 上戏校花迪丽热巴清新写真宛若小仙女 </h2>
+      <h2> {{ article.title }}</h2>
       <div class="source">
-        <div class="source_left"><span>2018-5-7</span> </div>
+        <div class="source_left"><span>{{ article.date }}</span> </div>
         <div class="source_right"> <a href="javascript:;" class="list">列表查看</a> </div>
         <div class="source_right1"> <a href="javascript:;" class="gaoqing">高清查看</a> </div>
       </div>
@@ -224,7 +224,7 @@
     </div>
     <div class="pictext">
       <ul>
-        游览普陀山一天时间足够了，如果考虑到还要来还愿，那就没必要一次把所有的地方都去到，如果只是单纯的旅游，那就把最重要的地方看看就可以了，普陀山并不是以景色著称的。普陀山上住宿餐饮价格都非常贵，住宿还好说，毕竟供不应求嘛，尤其是节假日，想要提前预定都不一定有房间，餐饮更是离谱，一般都是岛外四五倍的价格。所以建议大家像我们一样住在朱家尖，莲花路是朱家尖镇的中心，比较繁华热闹，住宿餐饮都集中在那里，岛上游玩去庙里体验素斋就可以啦。
+        {{ article.context }}
       </ul>
     </div>
     <div class="share">
@@ -236,23 +236,18 @@
     </div>
     <div class="news_pl">
         <h2>文章评论</h2>
-        <div class="gbko">
-          <script src="/e/pl/more/?classid=77&amp;id=106&amp;num=20"></script>
-          <div class="fb">
-            <ul>
-              <p class="fbtime"><span>2018-07-24 11:52:38</span>dancesmile</p>
-              <p class="fbinfo">这才是我要的朋友圈</p>
-            </ul>
-          </div>
-          <div class="fb">
-            <ul>
-              <p class="fbtime"><span>2018-07-24 08:52:48</span> 卜野</p>
-              <p class="fbinfo"></p>
-              <div class="ecomment"><span class="ecommentauthor">网友 家蚂蚁 的原文：</span>
-                <p class="ecommenttext">坚持哟!看你每天都有写，请继续加油，再接再厉哦</p>
+        {% for press in mypress %}
+            <div class="gbko">
+              <script src="/e/pl/more/?classid=77&amp;id=106&amp;num=20"></script>
+              <div class="fb">
+                <ul>
+                  <p class="fbtime"><span>{{ press.date }}</span>dancesmile</p>
+                  <p class="fbinfo">{{ press.content }}</p>
+                </ul>
               </div>
-            </ul>
-          </div>
+        {% endfor %}
+
+
 
           <script>
 		  function CheckPl(obj)
@@ -266,18 +261,12 @@
 		  return true;
 		  }
 		  </script>
-          <form action="/e/pl/doaction.php" method="post" name="saypl" id="saypl" onsubmit="return CheckPl(document.saypl)">
+          <form action="{{ url_for('blue.infopic',id=article.id) }}" method="post" name="saypl" id="saypl" onsubmit="return CheckPl(document.saypl)">
             <div id="plpost">
-              <p class="saying"><span><a href="/e/pl/?classid=77&amp;id=106">共有<script type="text/javascript" src="/e/public/ViewClick/?classid=77&amp;id=106&amp;down=2"></script>2条评论</a></span>来说两句吧...</p>
-              <p class="yname"><span>用户名:</span>
-                <input name="username" type="text" class="inputText" id="username" value="" size="16">
-              </p>
-              <p class="yzm"><span>验证码:</span>
-                <input name="key" type="text" class="inputText" size="16">
-              </p>
+              <p class="saying"><span><a href="/e/pl/?classid=77&amp;id=106">共有<script type="text/javascript" src="/e/public/ViewClick/?classid=77&amp;id=106&amp;down=2"></script>{{ article.press }}条评论</a></span>来说两句吧...</p>
               <input name="nomember" type="hidden" id="nomember" value="1" checked="checked">
               <textarea name="saytext" rows="6" id="saytext"></textarea>
-              <input name="imageField" type="submit" value="提交">
+              <input name="content" type="submit" value="提交">
               <input name="id" type="hidden" id="id" value="106">
               <input name="classid" type="hidden" id="classid" value="77">
               <input name="enews" type="hidden" id="enews" value="AddPl">

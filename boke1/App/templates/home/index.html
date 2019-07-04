@@ -26,7 +26,7 @@
       <li><a href="{{ url_for('blue.about') }}">关于我</a></li>
       <li><a href="{{ url_for('blue.gbook') }}">留言</a></li>
       <li><a href="{{ url_for('blue.info') }}">内容页</a></li>
-      <li><a href="{{ url_for('blue.infopic') }}">内容页</a></li>
+      <li><a href="#">内容页</a></li>
     </ul>
 </nav>
 </header>
@@ -100,7 +100,7 @@
     <ul>
         {% for article in articles %}
             <li><i><a href="/"><img src="/static/home/images/1.jpg"></a></i>
-                <h3><a href="{{ url_for('blue.check_article',id=article.id)}}">{{ article.title }}</a></h3>
+                <h3><a href="{{ url_for('blue.infopic',id=article.id)}}">{{ article.title }}</a></h3>
                 {{ article.context }}
              </li>
         {% endfor %}
